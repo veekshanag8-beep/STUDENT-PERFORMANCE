@@ -12,3 +12,6 @@ Thumbs.db
 
 # Experiment tracking (if used)
 mlruns/
+
+# Local tool config
+.claude/
