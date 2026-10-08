@@ -1,4 +1,4 @@
-"""Stage 3 - Cross-validated comparison of 4 models.
+"""Stage 3/4 - Cross-validated comparison of 4 models, then save the best one.
 
 Every model is a full Pipeline(preprocessor -> regressor), so cross_validate()
 re-fits the imputer/scaler inside each training fold. The validation fold is
@@ -8,15 +8,17 @@ Run:  python src/train.py
 """
 import sys
 
+import joblib
 import pandas as pd
+import sklearn
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import KFold, cross_validate
 from sklearn.pipeline import Pipeline
 
-from config import RANDOM_STATE, ROOT
-from features import build_preprocessor, load_training_data
+from config import MODEL_PATH, RANDOM_STATE, ROOT
+from features import FEATURES, build_preprocessor, load_training_data
 
 CV = KFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
 SCORING = {
@@ -89,7 +91,19 @@ def main():
     table = to_markdown(results)
     (out_dir / "cv_results.md").write_text(table + "\n", encoding="utf-8")
     print("\n" + table)
-    print(f"\nBest model: {results.loc[0, 'model']}")
+
+    # Refit the winner on ALL training rows and save it for predict.py / app.py
+    best_name = results.loc[0, "model"]
+    best = make_models()[best_name].fit(X, y)
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump({
+        "pipeline": best,
+        "model_name": best_name,
+        "features": FEATURES,
+        "cv_rmse": f"{results.loc[0, 'RMSE_mean']:.2f} ± {results.loc[0, 'RMSE_std']:.2f}",
+        "sklearn_version": sklearn.__version__,
+    }, MODEL_PATH)
+    print(f"\nBest model: {best_name} -> refitted on all {len(X)} rows, saved to {MODEL_PATH}")
 
 
 if __name__ == "__main__":
