@@ -27,6 +27,9 @@ def parse_args():
     p.add_argument("--input", required=True, help="CSV with an ID column and the feature columns")
     p.add_argument("--output", required=True, help="where to write ID,FinalExamScore")
     p.add_argument("--model", default=str(MODEL_PATH), help="path to the saved pipeline")
+    p.add_argument("--intervals", metavar="PATH",
+                   help="optional: also write ID,FinalExamScore,Lower90,Upper90 to this file "
+                        "(the --output file keeps the strict 2-column format)")
     return p.parse_args()
 
 
@@ -60,6 +63,15 @@ def main():
     out.to_csv(args.output, index=False, float_format="%.2f")
     print(f"Model: {bundle['model_name']} (CV RMSE {bundle['cv_rmse']})")
     print(f"Wrote {len(out)} predictions to {args.output}")
+
+    if args.intervals:
+        from intervals import INTERVAL_PATH, predict_interval
+        interval_models = joblib.load(INTERVAL_PATH)
+        lower, upper = predict_interval(interval_models, df)
+        out.assign(Lower90=lower.round(2), Upper90=upper.round(2)).to_csv(
+            args.intervals, index=False, float_format="%.2f")
+        print(f"Wrote 90% prediction intervals (CV coverage {interval_models['coverage']}) "
+              f"to {args.intervals}")
 
 
 if __name__ == "__main__":

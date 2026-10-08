@@ -15,6 +15,7 @@ import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 
 from config import ID_COL, MODEL_PATH, TARGET, VALID_RANGES  # noqa: E402
+from intervals import INTERVAL_PATH, predict_interval  # noqa: E402
 
 # label, step, help text for each feature
 INPUTS = {
@@ -35,6 +36,7 @@ def load_model():
     # Medians the imputer learned from training data -> sensible slider defaults
     imputer = bundle["pipeline"].named_steps["prep"].named_transformers_["num"].named_steps["impute"]
     bundle["defaults"] = dict(zip(bundle["features"], imputer.statistics_))
+    bundle["intervals"] = joblib.load(INTERVAL_PATH) if INTERVAL_PATH.exists() else None
     return bundle
 
 
@@ -70,8 +72,14 @@ with col_out:
     st.subheader("Prediction")
     st.metric("Predicted final exam score", f"{score:.1f} / 100")
     st.progress(score / 100)
-    st.write(f"Typical error: about **±{rmse:.0f} marks** "
-             f"(likely range {max(score - rmse, 0):.0f}–{min(score + rmse, 100):.0f}).")
+    if bundle["intervals"]:
+        lower, upper = predict_interval(bundle["intervals"], pd.DataFrame([values]))
+        st.write(f"**90% prediction interval: {lower[0]:.0f} – {upper[0]:.0f}**  \n"
+                 f"In cross-validation the true score fell inside this range "
+                 f"{bundle['intervals']['coverage']} of the time.")
+    else:
+        st.write(f"Typical error: about **±{rmse:.0f} marks** "
+                 f"(likely range {max(score - rmse, 0):.0f}–{min(score + rmse, 100):.0f}).")
     if score < 60:
         st.warning("Predicted low score. Note: the model tends to **over-estimate** students who "
                    "end up below 50, so the real risk may be higher than shown.")
