@@ -7,7 +7,7 @@ with nested hyperparameter tuning, a packaged CLI (`predict.py`) and a Streamlit
 **Result:** nested 5-fold CV RMSE **6.71 ± 0.39** marks (mean baseline: 14.04), with
 90% prediction intervals (92% CV coverage).
 
-Full write-up: [REPORT.md](REPORT.md) · Live demo: _add link here_
+Full write-up: [REPORT.md](REPORT.md) · Live demo: **[https://student-score-predictor11.streamlit.app/](https://student-score-predictor11.streamlit.app/)**
 
 ## Setup
 

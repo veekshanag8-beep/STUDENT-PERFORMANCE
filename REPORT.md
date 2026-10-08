@@ -6,7 +6,7 @@
 Every prediction comes with a **90% prediction interval** (92% coverage in CV).
 
 **Video walkthrough:** _add link here_
-**Live demo:** _add Streamlit Community Cloud link here_
+**Live demo (Streamlit Community Cloud):** [https://student-score-predictor11.streamlit.app/](https://student-score-predictor11.streamlit.app/)
 
 ---
 
