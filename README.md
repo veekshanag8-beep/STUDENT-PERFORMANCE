@@ -19,6 +19,8 @@ pip install -r requirements.txt
 ```bash
 python src/audit.py                     # data audit -> reports/figures
 python src/train.py                     # CV comparison + saves models/pipeline.joblib
+python src/leakage_check.py             # CV with vs without the leaky PostExamConfidence column
+python src/error_analysis.py            # residual plots + per-segment errors
 python predict.py --input data/student_performance_test.csv --output submission.csv
 streamlit run app.py                    # interactive demo
 ```
