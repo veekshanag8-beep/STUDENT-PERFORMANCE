@@ -1,5 +1,6 @@
-model,RMSE_mean,RMSE_std,MAE_mean,MAE_std,R2_mean,R2_std
-Hist Gradient Boosting,7.0324,0.5856,5.426,0.3316,0.7473,0.0387
-Random Forest,7.3632,0.4307,5.6149,0.2619,0.7239,0.0259
-Ridge (linear),7.7583,0.54,5.8429,0.3453,0.6925,0.0411
-Mean baseline,14.0444,0.3003,11.1366,0.2811,-0.003,0.0037
+model,RMSE_mean,RMSE_std,MAE_mean,MAE_std,R2_mean,R2_std,cv_seconds
+Hist Gradient Boosting (tuned),6.706,0.3939,5.2183,0.2517,0.7707,0.0243,68.4963
+Hist Gradient Boosting,7.0324,0.5856,5.426,0.3316,0.7473,0.0387,1.3457
+Random Forest,7.3632,0.4307,5.6149,0.2619,0.7239,0.0259,3.3058
+Ridge (linear),7.7583,0.54,5.8429,0.3453,0.6925,0.0411,0.1206
+Mean baseline,14.0444,0.3003,11.1366,0.2811,-0.003,0.0037,0.1586
