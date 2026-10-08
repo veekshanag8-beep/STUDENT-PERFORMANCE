@@ -1,0 +1,9 @@
+feature,rmse_increase_mean,rmse_increase_std
+PreviousExamScore,3.684,0.5398
+PreviousBacklogs,2.9525,0.4928
+SleepHours,2.0751,0.322
+StudyHours,1.3,0.3125
+ClassParticipation,1.1246,0.201
+AssignmentsCompleted,0.7312,0.1587
+AttendancePercentage,0.5559,0.2111
+ExtracurricularHours,-0.0004,0.0939
