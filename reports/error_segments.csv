@@ -1,0 +1,16 @@
+segment_type,segment,n,RMSE,MAE,bias
+Actual score band,<50,50,14.13,11.94,-10.93
+Actual score band,50-65,207,6.72,5.4,-2.59
+Actual score band,65-80,403,6.15,4.9,-0.15
+Actual score band,80-95,264,6.53,4.95,2.83
+Actual score band,95-100,70,7.26,5.69,5.33
+Previous backlogs,0,466,6.32,4.98,0.14
+Previous backlogs,1,298,7.33,5.53,-0.01
+Previous backlogs,2,135,7.16,5.51,0.09
+Previous backlogs,3+,88,9.47,7.47,-1.01
+Attendance %,<60,94,7.07,5.24,-0.92
+Attendance %,60-75,220,7.54,5.54,-0.05
+Attendance %,75-90,463,7.08,5.63,-0.14
+Attendance %,90+,179,6.25,4.76,0.71
+Input quality,clean input,759,6.68,5.13,0.01
+Input quality,missing/invalid input,235,8.15,6.37,-0.11
