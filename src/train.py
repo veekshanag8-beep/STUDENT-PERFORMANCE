@@ -79,7 +79,35 @@ def make_models():
     }
 
 
+def start_tracking():
+    """Experiment tracking with MLflow if installed (pip install -r requirements-dev.txt)."""
+    try:
+        import mlflow
+    except ImportError:
+        print("(MLflow not installed - skipping experiment tracking)")
+        return None
+    mlflow.set_tracking_uri(f"sqlite:///{(ROOT / 'mlflow.db').as_posix()}")
+    mlflow.set_experiment("student-performance")
+    return mlflow
+
+
+def log_run(mlflow, name, model, row):
+    if mlflow is None:
+        return
+    estimator = model.estimator if isinstance(model, RandomizedSearchCV) else model
+    params = {k.removeprefix("model__"): v for k, v in estimator.get_params().items()
+              if k.startswith("model__")}
+    with mlflow.start_run(run_name=name):
+        mlflow.log_params({"model": name, "cv": f"{CV.get_n_splits()}-fold KFold seed {RANDOM_STATE}",
+                           "n_features": len(FEATURES), **params})
+        if isinstance(model, RandomizedSearchCV):
+            mlflow.log_params({"tuning": "RandomizedSearchCV (nested CV)", "n_iter": N_ITER,
+                               "inner_cv": INNER_CV.get_n_splits()})
+        mlflow.log_metrics({k: float(v) for k, v in row.items() if k != "model"})
+
+
 def compare_models(X, y):
+    mlflow = start_tracking()
     rows = []
     for name, model in make_models().items():
         start = time.perf_counter()
@@ -93,6 +121,7 @@ def compare_models(X, y):
             row[f"{metric}_std"] = vals.std()
         row["cv_seconds"] = time.perf_counter() - start
         rows.append(row)
+        log_run(mlflow, name, model, row)
         print(f"  {name:32} RMSE {row['RMSE_mean']:.2f} ± {row['RMSE_std']:.2f}"
               f"   ({row['cv_seconds']:.1f}s)")
     return pd.DataFrame(rows).sort_values("RMSE_mean").reset_index(drop=True)
